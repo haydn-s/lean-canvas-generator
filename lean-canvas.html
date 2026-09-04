@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lean Canvas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js"></script>
+<style>
+:root{
+  --desk:#DDE4DC;
+  --desk-deep:#CCD6CB;
+  --desk-line:#C2CEC0;
+  --chrome-ink:#20302C;
+  --chrome-dim:#5C6C66;
+  --chrome-btn:#FFFFFF;
+  --chrome-btn-edge:#B7C4B5;
+  --paper:#FCFBF7;
+  --paper-sub:#F5F3EA;
+  --rule:#D4D1C4;
+  --ink:#1A211F;
+  --ink-soft:#6E766F;
+  --amber:#C07C08;
+  --amber-tint:#F6E9CB;
+  --shadow:rgba(24,48,40,.20);
+  --focus:#0F6E63;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --desk:#152220;
+    --desk-deep:#0E1917;
+    --desk-line:#233531;
+    --chrome-ink:#E3EDE8;
+    --chrome-dim:#8DA39B;
+    --chrome-btn:#20302C;
+    --chrome-btn-edge:#334842;
+    --shadow:rgba(0,0,0,.55);
+    --focus:#5FD2C2;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --desk:#152220; --desk-deep:#0E1917; --desk-line:#233531;
+  --chrome-ink:#E3EDE8; --chrome-dim:#8DA39B;
+  --chrome-btn:#20302C; --chrome-btn-edge:#334842;
+  --shadow:rgba(0,0,0,.55); --focus:#5FD2C2;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--desk);
+  background-image:
+    linear-gradient(var(--desk-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--desk-line) 1px, transparent 1px);
+  background-size:26px 26px;
+  color:var(--chrome-ink);
+  font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  font-size:15px;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:3px}
+
+/* ---------- chrome ---------- */
+.shell{max-width:1560px;margin:0 auto;padding:18px 16px 44px}
+.bar{
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;
+  margin-bottom:14px;
+}
+.mark{
+  font-family:"Bricolage Grotesque",Georgia,serif;
+  font-weight:800;font-size:19px;letter-spacing:-.02em;
+  display:flex;align-items:baseline;gap:9px;margin-right:2px;
+}
+.mark span{font-family:"Public Sans",sans-serif;font-weight:400;font-size:12.5px;color:var(--chrome-dim);letter-spacing:0}
+.spacer{flex:1 1 40px}
+.btn{
+  background:var(--chrome-btn);border:1px solid var(--chrome-btn-edge);
+  padding:6px 12px;border-radius:7px;cursor:pointer;font-size:13.5px;font-weight:500;
+  white-space:nowrap;
+}
+.btn:hover{border-color:var(--focus)}
+.btn[aria-pressed="true"]{background:var(--amber);border-color:var(--amber);color:#231a06}
+.btn.quiet{background:transparent;border-color:transparent;color:var(--chrome-dim);padding:6px 8px}
+.btn.quiet:hover{color:var(--chrome-ink)}
+.menu-wrap{position:relative}
+.menu{
+  position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:224px;
+  background:var(--chrome-btn);border:1px solid var(--chrome-btn-edge);
+  border-radius:9px;box-shadow:0 12px 30px var(--shadow);padding:5px;
+}
+.menu[hidden]{display:none}
+.menu button{
+  display:block;width:100%;text-align:left;background:none;border:0;
+  padding:8px 10px;border-radius:6px;cursor:pointer;font-size:13.5px;
+}
+.menu button:hover{background:var(--desk-deep)}
+.menu button small{display:block;color:var(--chrome-dim);font-size:11.5px;margin-top:1px}
+.menu hr{border:0;border-top:1px solid var(--chrome-btn-edge);margin:5px 2px}
+
+.tabs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:12px}
+.tab{
+  background:transparent;border:1px solid transparent;border-radius:7px;
+  padding:5px 11px;cursor:pointer;font-size:13px;color:var(--chrome-dim);
+}
+.tab:hover{color:var(--chrome-ink)}
+.tab[aria-current="true"]{background:var(--chrome-btn);border-color:var(--chrome-btn-edge);color:var(--chrome-ink);font-weight:600}
+.tab-note{font-size:12px;color:var(--chrome-dim);margin-left:4px;font-style:italic}
+
+/* ---------- guide rail ---------- */
+.guide{
+  display:none;align-items:center;gap:12px;flex-wrap:wrap;
+  background:var(--amber-tint);color:#3A2B06;border:1px solid #E0C88A;
+  border-radius:9px;padding:9px 12px;margin-bottom:12px;font-size:13.5px;
+}
+body.guiding .guide{display:flex}
+.guide b{font-family:"Bricolage Grotesque",serif;font-weight:700}
+.guide .gnum{
+  background:#C07C08;color:#fff;border-radius:50%;width:23px;height:23px;
+  display:grid;place-items:center;font-weight:700;font-size:12.5px;flex:none;
+}
+.guide button{background:#fff;border:1px solid #DFC896;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px;color:#3A2B06}
+
+/* ---------- the sheet ---------- */
+.sheet{
+  background:var(--paper);
+  border-radius:4px;
+  box-shadow:0 1px 0 rgba(0,0,0,.06), 0 18px 44px -14px var(--shadow);
+  padding:20px 20px 18px;
+  color:var(--ink);
+}
+.sheet-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.sheet-title{
+  font-family:"Bricolage Grotesque",Georgia,serif;font-weight:700;font-size:24px;
+  letter-spacing:-.015em;border:0;background:transparent;color:var(--ink);
+  padding:2px 4px;margin:-2px -4px;border-radius:4px;min-width:120px;flex:1 1 240px;
+}
+.sheet-title:hover{background:var(--paper-sub)}
+.sheet-title:focus{background:var(--paper-sub);outline:2px solid var(--focus)}
+.sheet-meta{font-size:12.5px;color:var(--ink-soft)}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(10,1fr);
+  grid-template-rows:minmax(168px,1fr) minmax(168px,1fr) minmax(128px,auto);
+  gap:1px;background:var(--rule);border:1px solid var(--rule);
+}
+.block{
+  background:var(--paper);display:flex;flex-direction:column;min-width:0;min-height:0;
+  transition:opacity .18s ease;
+}
+.block.dim{opacity:.28}
+.block.spot{box-shadow:inset 0 0 0 2px var(--amber)}
+.block.dropping{background:var(--amber-tint)}
+.b-problem{grid-column:1/3;grid-row:1/3}
+.b-solution{grid-column:3/5;grid-row:1/2}
+.b-metrics{grid-column:3/5;grid-row:2/3}
+.b-uvp{grid-column:5/7;grid-row:1/3}
+.b-advantage{grid-column:7/9;grid-row:1/2}
+.b-channels{grid-column:7/9;grid-row:2/3}
+.b-segments{grid-column:9/11;grid-row:1/3}
+.b-costs{grid-column:1/6;grid-row:3/4}
+.b-revenue{grid-column:6/11;grid-row:3/4}
+
+.bhead{display:flex;align-items:baseline;gap:7px;padding:9px 11px 5px}
+.bnum{font-family:"Bricolage Grotesque",serif;font-weight:800;font-size:13px;color:var(--amber);flex:none;width:11px}
+.btitle{font-family:"Bricolage Grotesque",serif;font-weight:700;font-size:13.5px;letter-spacing:-.01em}
+.bhint{font-size:11.5px;color:var(--ink-soft);padding:0 11px 6px;margin-top:-2px}
+.blist{flex:1 1 auto;overflow:auto;padding:0 8px 8px;min-height:0}
+.sub{
+  border-top:1px dashed var(--rule);background:var(--paper-sub);
+  display:flex;flex-direction:column;flex:0 0 auto;max-height:44%;
+}
+.sub .bhead{padding-top:7px}
+.sub .btitle{font-size:12px}
+
+.item{display:flex;gap:6px;align-items:flex-start;border-radius:5px;padding:1px 2px}
+.item:hover{background:var(--paper-sub)}
+.sub .item:hover{background:#EDEADE}
+.item.drag{opacity:.4}
+.dot{
+  flex:none;width:16px;height:20px;display:grid;place-items:center;cursor:grab;
+  color:var(--ink-soft);font-size:15px;line-height:1;user-select:none;
+}
+.dot:active{cursor:grabbing}
+.item textarea{
+  flex:1 1 auto;border:0;background:transparent;resize:none;overflow:hidden;
+  font:inherit;font-size:13px;line-height:1.38;color:var(--ink);
+  padding:2px 2px;margin:0;min-height:20px;border-radius:4px;
+}
+.item textarea:focus{outline:0;background:#fff;box-shadow:0 0 0 2px var(--focus)}
+.kill{
+  flex:none;border:0;background:none;cursor:pointer;color:var(--ink-soft);
+  font-size:14px;line-height:1;padding:3px 4px;border-radius:4px;opacity:0;
+}
+.item:hover .kill,.kill:focus{opacity:1}
+.kill:hover{color:#A32B1E}
+.add{
+  border:0;background:none;color:var(--ink-soft);cursor:pointer;font-size:12.5px;
+  padding:3px 6px;border-radius:5px;text-align:left;width:100%;
+}
+.add:hover{background:var(--paper-sub);color:var(--ink)}
+
+.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--chrome-dim)}
+.foot a{color:inherit}
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+  background:var(--chrome-ink);color:var(--desk);padding:9px 16px;border-radius:8px;
+  font-size:13.5px;box-shadow:0 10px 26px var(--shadow);z-index:60;max-width:90vw;
+}
+.toast[hidden]{display:none}
+
+@media (max-width:900px){
+  .grid{display:flex;flex-direction:column;border-width:1px}
+  .block{min-height:120px}
+  .sub{max-height:none}
+  .b-problem{order:1}.b-segments{order:2}.b-uvp{order:3}.b-solution{order:4}
+  .b-channels{order:5}.b-revenue{order:6}.b-costs{order:7}.b-metrics{order:8}.b-advantage{order:9}
+  .sheet{padding:14px 12px}
+  .shell{padding:12px 10px 40px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="bar">
+    <div class="mark">Lean Canvas <span>one page, nine boxes, nine guesses</span></div>
+    <div class="spacer"></div>
+    <button class="btn" id="guideBtn" aria-pressed="false">Guide me</button>
+    <button class="btn quiet" id="importBtn">Import</button>
+    <div class="menu-wrap">
+      <button class="btn" id="exportBtn" aria-expanded="false">Export</button>
+      <div class="menu" id="exportMenu" hidden>
+        <button data-x="pptx">PowerPoint slide<small>One 16:9 slide, editable shapes</small></button>
+        <button data-x="png">Image<small>2400 × 1350 PNG</small></button>
+        <hr>
+        <button data-x="json">Canvas file<small>JSON of every canvas, to re-import</small></button>
+        <button data-x="clip">Copy as text<small>Plain outline to the clipboard</small></button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs" aria-label="Canvases"></nav>
+
+  <div class="guide" id="guide">
+    <span class="gnum" id="gNum">1</span>
+    <span>Step <b id="gStep">1 of 9</b> — <b id="gName">Problem</b>. <span id="gWhy"></span></span>
+    <div class="spacer"></div>
+    <button id="gPrev">Back</button>
+    <button id="gNext">Next</button>
+  </div>
+
+  <main class="sheet" id="sheet">
+    <div class="sheet-head">
+      <input class="sheet-title" id="title" value="Untitled canvas" aria-label="Canvas name">
+      <span class="sheet-meta" id="meta"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <div class="foot">
+    <span id="saveState">Saved in this browser</span>
+    <span>Fill order: problem → customers → value → solution → channels → revenue → costs → metrics → advantage</span>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+<input type="file" id="fileIn" accept=".json,application/json" hidden>
+
+<script>
+"use strict";
+
+/* ============================ model ============================ */
+
+const BLOCKS = [
+  {k:"problem",   n:1, t:"Problem",                   h:"The top three problems worth solving",
+   sub:{k:"alternatives", t:"Existing alternatives", h:"How these get solved today"}},
+  {k:"solution",  n:4, t:"Solution",                  h:"The smallest thing that could possibly work"},
+  {k:"metrics",   n:8, t:"Key metrics",               h:"The numbers that tell you it's working"},
+  {k:"uvp",       n:3, t:"Unique value proposition",  h:"One clear message, in the customer's words",
+   sub:{k:"concept", t:"High-level concept", h:"The X-for-Y shorthand"}},
+  {k:"advantage", n:9, t:"Unfair advantage",          h:"What can't be copied or bought"},
+  {k:"channels",  n:5, t:"Channels",                  h:"Your paths to customers"},
+  {k:"segments",  n:2, t:"Customer segments",         h:"Who exactly this is for",
+   sub:{k:"adopters", t:"Early adopters", h:"The ideal first customer"}},
+  {k:"costs",     n:7, t:"Cost structure",            h:"What it takes to run this"},
+  {k:"revenue",   n:6, t:"Revenue streams",           h:"How money actually arrives"}
+];
+const BY_KEY = {};
+BLOCKS.forEach(b=>{ BY_KEY[b.k]=b; if(b.sub){ BY_KEY[b.sub.k]={...b.sub,n:null,parent:b.k}; } });
+const ALL_KEYS = Object.keys(BY_KEY);
+
+/* Ash Maurya's fill sequence, with the nested boxes attached to their step */
+const STEPS = [
+  {n:1, keys:["problem","alternatives"], name:"Problem",                  why:"Start with the pain, not the product."},
+  {n:2, keys:["segments","adopters"],    name:"Customer segments",        why:"Name the person, not the market."},
+  {n:3, keys:["uvp","concept"],          name:"Unique value proposition", why:"Why you're different and worth attention."},
+  {n:4, keys:["solution"],               name:"Solution",                 why:"One bullet per problem. Sketch, don't build."},
+  {n:5, keys:["channels"],               name:"Channels",                 why:"How you reach them before you scale."},
+  {n:6, keys:["revenue"],                name:"Revenue streams",          why:"Price is part of the product."},
+  {n:7, keys:["costs"],                  name:"Cost structure",           why:"What it costs to reach and serve them."},
+  {n:8, keys:["metrics"],                name:"Key metrics",              why:"The one number that shows traction."},
+  {n:9, keys:["advantage"],              name:"Unfair advantage",         why:"Leave it blank until it's real."}
+];
+
+const STORE = "leancanvas.v1";
+const uid = () => Math.random().toString(36).slice(2,9);
+
+function blankCanvas(name){
+  const blocks = {};
+  ALL_KEYS.forEach(k=>blocks[k]=[]);
+  return {id:uid(), name:name||"Untitled canvas", updated:Date.now(), blocks};
+}
+
+let state = load();
+let guiding = false, step = 0;
+
+function load(){
+  try{
+    const raw = localStorage.getItem(STORE);
+    if(raw){
+      const s = JSON.parse(raw);
+      if(s && Array.isArray(s.canvases) && s.canvases.length){
+        s.canvases.forEach(c=>{ ALL_KEYS.forEach(k=>{ if(!Array.isArray(c.blocks[k])) c.blocks[k]=[]; }); });
+        if(!s.canvases.some(c=>c.id===s.activeId)) s.activeId = s.canvases[0].id;
+        return s;
+      }
+    }
+  }catch(e){ /* fall through to a fresh canvas */ }
+  const c = blankCanvas("Untitled canvas");
+  return {version:1, activeId:c.id, canvases:[c]};
+}
+
+let saveTimer=null;
+function save(){
+  active().updated = Date.now();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    try{
+      localStorage.setItem(STORE, JSON.stringify(state));
+      el("saveState").textContent = "Saved in this browser · " + new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+    }catch(e){
+      el("saveState").textContent = "Couldn't save to this browser — export a canvas file to keep your work.";
+    }
+  }, 300);
+}
+
+const active = () => state.canvases.find(c=>c.id===state.activeId) || state.canvases[0];
+const el = id => document.getElementById(id);
+
+/* ============================ render ============================ */
+
+function render(){
+  renderTabs();
+  el("title").value = active().name;
+  el("meta").textContent = filledCount() + " of 9 boxes filled";
+  renderGrid();
+  applyGuide();
+}
+
+function filledCount(){
+  return BLOCKS.filter(b=>{
+    const c=active().blocks;
+    return (c[b.k]||[]).some(nonEmpty) || (b.sub && (c[b.sub.k]||[]).some(nonEmpty));
+  }).length;
+}
+const nonEmpty = it => it.text.trim().length>0;
+
+function renderTabs(){
+  const wrap = el("tabs");
+  wrap.innerHTML = "";
+  state.canvases.forEach(c=>{
+    const b=document.createElement("button");
+    b.className="tab"; b.textContent=c.name || "Untitled";
+    b.setAttribute("aria-current", c.id===state.activeId ? "true":"false");
+    b.onclick=()=>{ state.activeId=c.id; save(); render(); };
+    wrap.appendChild(b);
+  });
+  const add=document.createElement("button");
+  add.className="tab"; add.textContent="+ New canvas";
+  add.onclick=()=>{
+    const c=blankCanvas("Segment " + (state.canvases.length+1));
+    state.canvases.push(c); state.activeId=c.id; save(); render();
+    el("title").focus(); el("title").select();
+  };
+  wrap.appendChild(add);
+  if(state.canvases.length>1){
+    const del=document.createElement("button");
+    del.className="tab"; del.textContent="Delete this one";
+    del.onclick=()=>{
+      if(!confirm("Delete “"+active().name+"”? This can't be undone.")) return;
+      state.canvases = state.canvases.filter(c=>c.id!==state.activeId);
+      state.activeId = state.canvases[0].id; save(); render();
+    };
+    wrap.appendChild(del);
+  }
+  const note=document.createElement("span");
+  note.className="tab-note";
+  note.textContent = state.canvases.length>1 ? "" : "Tip: one canvas per customer segment";
+  wrap.appendChild(note);
+}
+
+function renderGrid(){
+  const grid = el("grid");
+  grid.innerHTML = "";
+  BLOCKS.forEach(def=>{
+    const box=document.createElement("section");
+    box.className="block b-"+def.k;
+    box.dataset.key=def.k;
+    box.appendChild(headOf(def));
+    box.appendChild(listOf(def.k));
+    if(def.sub){
+      const s=document.createElement("div");
+      s.className="sub"; s.dataset.key=def.sub.k;
+      s.appendChild(headOf({...def.sub, n:null}));
+      s.appendChild(listOf(def.sub.k));
+      wireDrop(s, def.sub.k);
+      box.appendChild(s);
+    }
+    wireDrop(box, def.k);
+    grid.appendChild(box);
+  });
+}
+
+function headOf(def){
+  const f=document.createDocumentFragment();
+  const head=document.createElement("div"); head.className="bhead";
+  const num=document.createElement("span"); num.className="bnum"; num.textContent = def.n || "";
+  const ttl=document.createElement("h2"); ttl.className="btitle"; ttl.textContent=def.t;
+  head.append(num,ttl); f.appendChild(head);
+  const hint=document.createElement("p"); hint.className="bhint"; hint.textContent=def.h;
+  f.appendChild(hint);
+  return f;
+}
+
+function listOf(key){
+  const list=document.createElement("div"); list.className="blist"; list.dataset.list=key;
+  active().blocks[key].forEach(item=>list.appendChild(itemNode(key,item)));
+  const add=document.createElement("button");
+  add.className="add"; add.type="button"; add.textContent="+ add a point";
+  add.onclick=()=>addItem(key);
+  list.appendChild(add);
+  return list;
+}
+
+function itemNode(key,item){
+  const row=document.createElement("div"); row.className="item"; row.dataset.id=item.id;
+
+  const dot=document.createElement("span");
+  dot.className="dot"; dot.textContent="•"; dot.draggable=true;
+  dot.title="Drag to another box";
+  dot.addEventListener("dragstart",e=>{
+    e.dataTransfer.setData("text/plain", JSON.stringify({from:key,id:item.id}));
+    e.dataTransfer.effectAllowed="move";
+    row.classList.add("drag");
+  });
+  dot.addEventListener("dragend",()=>row.classList.remove("drag"));
+
+  const ta=document.createElement("textarea");
+  ta.rows=1; ta.value=item.text; ta.placeholder="…";
+  ta.addEventListener("input",()=>{ item.text=ta.value; grow(ta); save(); el("meta").textContent=filledCount()+" of 9 boxes filled"; });
+  ta.addEventListener("keydown",e=>{
+    if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); addItem(key,item.id); }
+    else if(e.key==="Backspace" && ta.value===""){ e.preventDefault(); removeItem(key,item.id,true); }
+    else if(e.key==="Escape"){ ta.blur(); }
+  });
+
+  const kill=document.createElement("button");
+  kill.className="kill"; kill.type="button"; kill.innerHTML="&times;";
+  kill.setAttribute("aria-label","Delete this point");
+  kill.onclick=()=>removeItem(key,item.id);
+
+  row.append(dot,ta,kill);
+  requestAnimationFrame(()=>grow(ta));
+  return row;
+}
+
+function grow(ta){ ta.style.height="auto"; ta.style.height=(ta.scrollHeight)+"px"; }
+
+function addItem(key, afterId){
+  const arr=active().blocks[key];
+  const item={id:uid(), text:""};
+  const i = afterId ? arr.findIndex(x=>x.id===afterId) : -1;
+  if(i>=0) arr.splice(i+1,0,item); else arr.push(item);
+  save(); renderGrid(); applyGuide();
+  focusItem(key,item.id);
+}
+
+function removeItem(key,id,focusPrev){
+  const arr=active().blocks[key];
+  const i=arr.findIndex(x=>x.id===id);
+  if(i<0) return;
+  arr.splice(i,1);
+  save(); renderGrid(); applyGuide();
+  el("meta").textContent=filledCount()+" of 9 boxes filled";
+  if(focusPrev && arr[i-1]) focusItem(key,arr[i-1].id);
+}
+
+function focusItem(key,id){
+  const node=document.querySelector('[data-list="'+key+'"] [data-id="'+id+'"] textarea');
+  if(node){ node.focus(); node.selectionStart=node.value.length; }
+}
+
+function wireDrop(node,key){
+  node.addEventListener("dragover",e=>{
+    e.preventDefault(); e.stopPropagation();
+    e.dataTransfer.dropEffect="move"; node.classList.add("dropping");
+  });
+  node.addEventListener("dragleave",e=>{ if(!node.contains(e.relatedTarget)) node.classList.remove("dropping"); });
+  node.addEventListener("drop",e=>{
+    e.preventDefault(); e.stopPropagation(); node.classList.remove("dropping");
+    let data; try{ data=JSON.parse(e.dataTransfer.getData("text/plain")); }catch(_){ return; }
+    if(!data || data.from===key) return;
+    const src=active().blocks[data.from], i=src.findIndex(x=>x.id===data.id);
+    if(i<0) return;
+    active().blocks[key].push(src.splice(i,1)[0]);
+    save(); renderGrid(); applyGuide();
+  });
+}
+
+/* ============================ guide mode ============================ */
+
+el("guideBtn").onclick=()=>{
+  guiding=!guiding;
+  el("guideBtn").setAttribute("aria-pressed", String(guiding));
+  document.body.classList.toggle("guiding", guiding);
+  applyGuide();
+};
+el("gPrev").onclick=()=>{ step=(step+STEPS.length-1)%STEPS.length; applyGuide(); };
+el("gNext").onclick=()=>{ step=(step+1)%STEPS.length; applyGuide(); };
+
+function applyGuide(){
+  const s=STEPS[step];
+  el("gNum").textContent=s.n;
+  el("gStep").textContent=s.n+" of 9";
+  el("gName").textContent=s.name;
+  el("gWhy").textContent=s.why;
+  document.querySelectorAll(".block").forEach(b=>{
+    const on = !guiding || s.keys.includes(b.dataset.key);
+    b.classList.toggle("dim", guiding && !on);
+    b.classList.toggle("spot", guiding && on);
+  });
+}
+
+/* ============================ shared export layout ============================ */
+/* One layout in inches. The PPTX writer uses it directly; the PNG writer
+   multiplies by 180 px/in. Both exports render the full grid no matter how
+   narrow the screen is. */
+
+const SLIDE_W=13.333, SLIDE_H=7.5, PAD=0.36, HEAD=0.92;
+
+function layout(){
+  const x0=PAD, y0=HEAD, w=SLIDE_W-PAD*2, h=SLIDE_H-HEAD-PAD;
+  const cw=w/5, topH=h*0.72, halfH=topH/2, botY=y0+topH, botH=h-topH;
+  const SUB=0.30;                                   // share of a tall box given to its nested area
+  const out=[];
+  const put=(k,x,y,ww,hh,sub)=>out.push({key:k,x:x,y:y,w:ww,h:hh,sub:!!sub});
+  const tall=(k,i)=>{
+    const d=BY_KEY[k];
+    put(k, x0+cw*i, y0, cw, topH*(1-SUB));
+    put(d.sub? d.sub.k : k+"_x", x0+cw*i, y0+topH*(1-SUB), cw, topH*SUB, true);
+  };
+  tall("problem",0);
+  put("solution", x0+cw*1, y0,       cw, halfH);
+  put("metrics",  x0+cw*1, y0+halfH, cw, halfH);
+  tall("uvp",2);
+  put("advantage",x0+cw*3, y0,       cw, halfH);
+  put("channels", x0+cw*3, y0+halfH, cw, halfH);
+  tall("segments",4);
+  put("costs",   x0,        botY, w/2, botH);
+  put("revenue", x0+w/2,    botY, w/2, botH);
+  return out;
+}
+
+function textOf(key){
+  return (active().blocks[key]||[]).map(i=>i.text.trim()).filter(Boolean);
+}
+function labelOf(key){
+  const d=BY_KEY[key];
+  return d ? {num:d.n, title:d.t} : {num:null, title:""};
+}
+function stampDate(){
+  return new Date().toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
+}
+
+/* ============================ PPTX ============================ */
+
+async function exportPptx(){
+  if(typeof PptxGenJS==="undefined") throw new Error("The PowerPoint library didn't load. Check your connection and reload.");
+  const pptx=new PptxGenJS();
+  pptx.defineLayout({name:"LC169", width:SLIDE_W, height:SLIDE_H});
+  pptx.layout="LC169";
+  pptx.author="Lean Canvas";
+  pptx.title=active().name;
+
+  const s=pptx.addSlide();
+  s.background={color:"FCFBF7"};
+  s.addText(active().name||"Untitled canvas",
+    {x:PAD,y:0.26,w:SLIDE_W-PAD*2-2.6,h:0.44,fontSize:22,bold:true,color:"1A211F",fontFace:"Arial",valign:"middle"});
+  s.addText("Lean Canvas · "+stampDate(),
+    {x:SLIDE_W-PAD-2.6,y:0.30,w:2.6,h:0.36,fontSize:10,color:"6E766F",fontFace:"Arial",align:"right",valign:"middle"});
+
+  layout().forEach(r=>{
+    const lines=textOf(r.key);
+    const meta=labelOf(r.key)||{};
+    s.addShape(pptx.ShapeType.rect,{
+      x:r.x,y:r.y,w:r.w,h:r.h,
+      fill:{color: r.sub ? "F5F3EA" : "FCFBF7"},
+      line:{color:"D4D1C4", width:0.75, dashType: r.sub ? "dash" : "solid"}
+    });
+    const head=[];
+    if(meta.num) head.push({text:String(meta.num)+"  ",options:{color:"C07C08",bold:true}});
+    head.push({text:meta.title||"",options:{color:"1A211F",bold:true}});
+    s.addText(head,{x:r.x+0.10,y:r.y+0.07,w:r.w-0.20,h:0.24,fontSize:r.sub?9:10.5,fontFace:"Arial",valign:"top"});
+
+    if(lines.length){
+      const chars=lines.join(" ").length;
+      const fs = chars>620?7.5 : chars>420?8.5 : chars>240?9.5 : 10.5;
+      s.addText(lines.map(t=>({text:t,options:{bullet:true,breakLine:true}})),{
+        x:r.x+0.10, y:r.y+0.31, w:r.w-0.20, h:r.h-0.40,
+        fontSize:fs, color:"2A322F", fontFace:"Arial", valign:"top", lineSpacingMultiple:1.1
+      });
+    }
+  });
+
+  return await pptx.write({outputType:"blob"});
+}
+
+/* ============================ PNG ============================ */
+
+const PPI=180;
+
+async function exportPng(){
+  await (document.fonts && document.fonts.ready);
+  const cv=document.createElement("canvas");
+  cv.width=Math.round(SLIDE_W*PPI); cv.height=Math.round(SLIDE_H*PPI);
+  const c=cv.getContext("2d");
+  const px=v=>v*PPI;
+
+  c.fillStyle="#FCFBF7"; c.fillRect(0,0,cv.width,cv.height);
+
+  c.fillStyle="#1A211F";
+  c.font='700 '+px(0.24).toFixed(0)+'px "Bricolage Grotesque", Georgia, serif';
+  c.textBaseline="alphabetic";
+  c.fillText(active().name||"Untitled canvas", px(PAD), px(0.62));
+  c.fillStyle="#6E766F";
+  c.font='400 '+px(0.115).toFixed(0)+'px "Public Sans", sans-serif';
+  c.textAlign="right";
+  c.fillText("Lean Canvas · "+stampDate(), px(SLIDE_W-PAD), px(0.60));
+  c.textAlign="left";
+
+  layout().forEach(r=>{
+    const X=px(r.x), Y=px(r.y), W=px(r.w), H=px(r.h);
+    c.fillStyle = r.sub ? "#F5F3EA" : "#FCFBF7";
+    c.fillRect(X,Y,W,H);
+    c.strokeStyle="#D4D1C4"; c.lineWidth=Math.max(1,px(0.008));
+    c.setLineDash(r.sub ? [px(0.05),px(0.035)] : []);
+    c.strokeRect(X+0.5,Y+0.5,W-1,H-1);
+    c.setLineDash([]);
+
+    const meta=labelOf(r.key)||{};
+    const padX=px(0.11);
+    let cursor=Y+px(r.sub?0.20:0.23);
+    const titleSize=px(r.sub?0.105:0.12);
+    let tx=X+padX;
+    if(meta.num){
+      c.fillStyle="#C07C08";
+      c.font='800 '+titleSize.toFixed(1)+'px "Bricolage Grotesque", Georgia, serif';
+      c.fillText(String(meta.num), tx, cursor);
+      tx += c.measureText(String(meta.num)).width + px(0.075);
+    }
+    c.fillStyle="#1A211F";
+    c.font='700 '+titleSize.toFixed(1)+'px "Bricolage Grotesque", Georgia, serif';
+    c.fillText(meta.title||"", tx, cursor);
+
+    const lines=textOf(r.key);
+    if(!lines.length) return;
+    const maxW=W-padX*2-px(0.10);
+    const bottom=Y+H-px(0.10);
+    const chars=lines.join(" ").length;
+    let size = chars>620?px(0.085) : chars>420?px(0.095) : chars>240?px(0.105) : px(0.115);
+
+    for(let attempt=0; attempt<9; attempt++){
+      const lh=size*1.42;
+      const wrapped=[];
+      c.font='400 '+size.toFixed(1)+'px "Public Sans", sans-serif';
+      lines.forEach(t=>wrapLines(c,t,maxW).forEach((l,i)=>wrapped.push({l,first:i===0})));
+      const total=cursor+px(0.13)+wrapped.length*lh;
+      if(total<=bottom || size<=px(0.055)){
+        let y=cursor+px(0.15)+size;
+        wrapped.forEach(w=>{
+          if(y>bottom+lh) return;
+          c.fillStyle="#2A322F";
+          if(w.first){
+            c.fillStyle="#8C938D";
+            c.fillText("—", X+padX, y);
+            c.fillStyle="#2A322F";
+          }
+          c.fillText(w.l, X+padX+px(0.14), y);
+          y+=lh;
+        });
+        break;
+      }
+      size*=0.9;
+    }
+  });
+
+  return await new Promise(res=>cv.toBlob(res,"image/png"));
+}
+
+function wrapLines(ctx,text,maxW){
+  const words=text.split(/\s+/), out=[]; let line="";
+  words.forEach(w=>{
+    const test = line ? line+" "+w : w;
+    if(ctx.measureText(test).width>maxW && line){ out.push(line); line=w; }
+    else line=test;
+  });
+  if(line) out.push(line);
+  return out.length?out:[""];
+}
+
+/* ============================ text + json ============================ */
+
+function asText(){
+  const c=active();
+  const out=["# "+c.name, ""];
+  STEPS.forEach(s=>{
+    s.keys.forEach(k=>{
+      const items=textOf(k);
+      const d=BY_KEY[k];
+      out.push((d.n?d.n+". ":"   ")+d.t);
+      if(items.length) items.forEach(t=>out.push("   - "+t));
+      else out.push("   (empty)");
+      out.push("");
+    });
+  });
+  return out.join("\n");
+}
+
+/* ============================ saving files ============================ */
+/* Two environments, two mechanisms.
+   Inside the Claude artifact runtime, plain <a download> links are inert, so
+   files go through the platform's downloads capability and the viewer confirms.
+   Standalone (a local file, your own web server), that capability doesn't
+   exist, so we fall back to an object URL and a synthetic click. */
+
+const IN_ARTIFACT = !!(window.claude && typeof window.claude.use === "function");
+const downloadsReady = IN_ARTIFACT ? window.claude.use("downloads").catch(()=>null) : Promise.resolve(null);
+let downloads=null, capabilityResolved=!IN_ARTIFACT;
+
+downloadsReady.then(d=>{
+  downloads=d; capabilityResolved=true;
+  if(IN_ARTIFACT && !d) markSavingUnavailable();
+});
+
+function markSavingUnavailable(){
+  const m=el("exportMenu");
+  m.querySelectorAll('[data-x="pptx"],[data-x="png"],[data-x="json"]').forEach(b=>{
+    b.disabled=true; b.style.opacity=".45"; b.style.cursor="default";
+  });
+  if(m.querySelector(".nosave")) return;
+  const note=document.createElement("small");
+  note.className="nosave";
+  note.style.cssText="display:block;padding:8px 10px;color:var(--chrome-dim)";
+  note.textContent="File saving isn't available in this view. Copy as text still works.";
+  m.appendChild(note);
+}
+
+const MIME={
+  pptx:"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  png:"image/png", json:"application/json", txt:"text/plain", svg:"image/svg+xml"
+};
+
+function safeName(ext){
+  const base=(active().name||"lean-canvas").replace(/[^\w\d\- ]+/g,"").trim().replace(/\s+/g,"-").toLowerCase()||"lean-canvas";
+  return base+"."+ext;
+}
+
+/* Standalone path: object URL + synthetic anchor click. */
+function saveViaAnchor(filename,data){
+  const ext=(filename.split(".").pop()||"").toLowerCase();
+  const blob = data instanceof Blob ? data
+             : new Blob([data], {type: MIME[ext] || "application/octet-stream"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url; a.download=filename; a.rel="noopener";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 30000);
+}
+
+async function saveFile(filename,data,okMsg){
+  const d = capabilityResolved ? downloads : (downloads || await downloadsReady);
+
+  if(!d){
+    if(IN_ARTIFACT){ toast("File saving isn't available in this view."); return; }
+    try{ saveViaAnchor(filename,data); toast(okMsg); }
+    catch(err){ toast("The file couldn't be saved. Try again."); }
+    return;
+  }
+
+  try{
+    const res=await d.save({filename,data});
+    if(res.status==="saved") toast(okMsg);
+  }catch(err){
+    const code=err && err.code;
+    if(code==="declined") return;
+    if(code==="rate_limited") toast("A save prompt is already open.");
+    else if(code==="rejected_extension"||code==="extension_not_enabled") toast("That format can't be saved here.");
+    else toast("The file couldn't be saved. Try again.");
+  }
+}
+
+/* ============================ wiring ============================ */
+
+el("exportBtn").onclick=e=>{
+  e.stopPropagation();
+  const m=el("exportMenu"), open=m.hidden;
+  m.hidden=!open;
+  el("exportBtn").setAttribute("aria-expanded",String(open));
+};
+document.addEventListener("click",()=>{
+  el("exportMenu").hidden=true;
+  el("exportBtn").setAttribute("aria-expanded","false");
+});
+el("exportMenu").addEventListener("click",async e=>{
+  const btn=e.target.closest("button[data-x]");
+  if(!btn || btn.disabled) return;
+  el("exportMenu").hidden=true;
+  const kind=btn.dataset.x;
+  try{
+    if(kind==="pptx"){ toast("Building the slide…"); await saveFile(safeName("pptx"), await exportPptx(), "Slide saved."); }
+    if(kind==="png"){ toast("Drawing the image…"); await saveFile(safeName("png"), await exportPng(), "Image saved."); }
+    if(kind==="json"){ await saveFile(safeName("json"), JSON.stringify(state,null,2), "Canvas file saved."); }
+    if(kind==="clip"){
+      const text=asText();
+      let done=false;
+      if(navigator.clipboard && window.isSecureContext){
+        try{ await navigator.clipboard.writeText(text); done=true; }catch(_){}
+      }
+      if(!done){
+        // file:// and other insecure contexts have no async clipboard
+        const ta=document.createElement("textarea");
+        ta.value=text; ta.setAttribute("readonly","");
+        ta.style.cssText="position:fixed;top:-1000px;opacity:0";
+        document.body.appendChild(ta); ta.select();
+        try{ done=document.execCommand("copy"); }catch(_){}
+        ta.remove();
+      }
+      if(done) toast("Outline copied.");
+      else await saveFile(safeName("txt"), text, "Outline saved as a text file.");
+    }
+  }catch(err){
+    toast((err && err.message) || "That didn't work. Try again.");
+  }
+});
+
+el("importBtn").onclick=()=>el("fileIn").click();
+el("fileIn").addEventListener("change",async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  try{
+    const data=JSON.parse(await f.text());
+    const incoming = Array.isArray(data.canvases) ? data.canvases : (data.blocks ? [data] : null);
+    if(!incoming) throw new Error("no canvases");
+    incoming.forEach(c=>{
+      const fresh=blankCanvas(c.name||"Imported canvas");
+      ALL_KEYS.forEach(k=>{
+        if(Array.isArray(c.blocks && c.blocks[k]))
+          fresh.blocks[k]=c.blocks[k].filter(i=>i&&typeof i.text==="string").map(i=>({id:uid(),text:i.text}));
+      });
+      state.canvases.push(fresh);
+      state.activeId=fresh.id;
+    });
+    save(); render();
+    toast("Imported "+incoming.length+(incoming.length===1?" canvas.":" canvases."));
+  }catch(err){
+    toast("That file isn't a canvas export.");
+  }
+  e.target.value="";
+});
+
+el("title").addEventListener("input",e=>{ active().name=e.target.value; save(); renderTabs(); });
+
+let toastTimer=null;
+function toast(msg){
+  const t=el("toast");
+  t.textContent=msg; t.hidden=false;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.hidden=true, 2600);
+}
+
+window.addEventListener("resize",()=>{
+  document.querySelectorAll(".item textarea").forEach(grow);
+});
+
+render();
+save();
+</script>
+</body>
+</html>
